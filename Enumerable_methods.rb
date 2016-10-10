@@ -18,5 +18,15 @@ module Enumerable
 		end
 		return self
 	end
+
+	def my_select
+		counter = 0
+		result = Array.new
+		until counter == self.length
+			result << self[counter] if yield self[counter]
+			counter += 1
+		end
+		return result
+	end
 	
 end
