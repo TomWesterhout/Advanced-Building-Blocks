@@ -7,6 +7,7 @@ module Enumerable
 			yield self[count]
 			count += 1
 		end
+		return self
 	end
 	
 end
