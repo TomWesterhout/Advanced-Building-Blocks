@@ -21,12 +21,31 @@ module Enumerable
 
 	def my_select
 		counter = 0
-		result = Array.new
+		result = []
 		until counter == self.length
 			result << self[counter] if yield self[counter]
 			counter += 1
 		end
 		return result
+	end
+
+	def my_all?
+		counter = 0
+		result = []
+		block = Proc.new {|val| val}
+		until counter == self.length
+			if block_given?
+				result.push(yield self[counter])
+			else
+				result.push(block.call(self[counter]))
+			end
+			counter += 1
+		end
+		if result.include?(false) || result.include?(nil)
+			puts false
+		else
+			puts true
+		end
 	end
 	
 end
