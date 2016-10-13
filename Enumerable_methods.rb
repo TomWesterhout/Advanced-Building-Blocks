@@ -131,4 +131,21 @@ module Enumerable
 		return result
 	end
 
+	def my_inject(par=nil)
+		counter = 0
+		result = 0
+		if par.is_a? Symbol
+			until counter == self.length
+				result = result.send(par, self[counter])
+				counter += 1
+			end
+		else
+			until counter == self.length
+				result = yield(result, self[counter])
+				counter += 1
+			end
+		end
+		return result
+	end
+
 end
