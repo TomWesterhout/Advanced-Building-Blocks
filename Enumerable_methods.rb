@@ -42,9 +42,9 @@ module Enumerable
 			counter += 1
 		end
 		if result.include?(false) || result.include?(nil)
-			puts false
+			return false
 		else
-			puts true
+			return true
 		end
 	end
 
@@ -65,10 +65,62 @@ module Enumerable
 			counter += 1
 		end
 		if result.include?(true)
-			puts true
+			return true
 		else
-			puts false
+			return false
 		end			
 	end
+
+	def my_none?
+		counter = 0
+		result = []
+		if block_given?
+			until counter == self.length
+				if yield self[counter] == true
+					result.push(true)
+					puts yield self[counter]
+				end
+				counter += 1
+			end
+			if result.include?(true)
+				puts false
+			else
+				puts true
+			end
+		else
+			if self.include?(true)
+				puts true
+			else
+				puts false
+			end
+		end
+	end
+
+	def my_none?
+		counter = 0
+		result = []
+		if block_given?
+			until counter == self.length
+				if yield self[counter]
+					result << true
+				else
+					result << false
+				end
+				counter += 1
+			end
+			if result.include?(true)
+				return false
+			else
+				return true
+			end
+		else
+			if self.include?(true)
+				return false
+			else
+				return true
+			end
+		end
+	end
+
 
 end
