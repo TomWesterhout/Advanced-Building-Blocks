@@ -97,5 +97,28 @@ module Enumerable
 		end
 	end
 
+	def my_count?(arg=0)
+		counter = 0
+		result = 0
+		if block_given?
+			until counter == self.length
+				if yield self[counter]
+					result += 1
+				end
+				counter += 1
+			end
+			puts result
+		elsif arg > 0
+			until counter == self.length
+				if self[counter] == arg
+					result += 1
+				end
+				counter += 1
+			end
+			puts result
+		else
+			puts self.length
+		end
+	end
 
 end
