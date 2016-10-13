@@ -121,4 +121,14 @@ module Enumerable
 		end
 	end
 
+	def my_map
+		counter = 0
+		result = []
+		until counter == self.length
+			result.push(yield self[counter])
+			counter += 1
+		end
+		return result
+	end
+
 end
