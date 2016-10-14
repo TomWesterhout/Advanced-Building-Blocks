@@ -121,11 +121,15 @@ module Enumerable
 		end
 	end
 
-	def my_map
+	def my_map(&block)
 		counter = 0
 		result = []
 		until counter == self.length
-			result.push(yield self[counter])
+			if block_given?
+				result.push(yield self[counter])
+			else
+				block.call(self[counter])
+			end
 			counter += 1
 		end
 		return result
@@ -145,7 +149,7 @@ module Enumerable
 				counter += 1
 			end
 		end
-		p result
+		return result
 	end
 
 	def multiply_els
@@ -159,9 +163,3 @@ module Enumerable
 	end
 
 end
-
-class Array
-	include Enumerable
-end
-
-[1, 2, 3, 4, 5].multiply_els
