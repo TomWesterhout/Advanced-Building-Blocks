@@ -134,7 +134,7 @@ module Enumerable
 	def my_inject(par=nil)
 		counter = 0
 		result = 0
-		if par.is_a? Symbol
+		if par.is_a?(Symbol)
 			until counter == self.length
 				result = result.send(par, self[counter])
 				counter += 1
@@ -145,7 +145,23 @@ module Enumerable
 				counter += 1
 			end
 		end
-		return result
+		p result
+	end
+
+	def multiply_els
+		self.my_inject do |sum, val|
+			if sum == 0
+				sum = val
+			else
+				sum * val
+			end
+		end
 	end
 
 end
+
+class Array
+	include Enumerable
+end
+
+[1, 2, 3, 4, 5].multiply_els
