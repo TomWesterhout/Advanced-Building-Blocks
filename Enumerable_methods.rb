@@ -2,158 +2,110 @@
 module Enumerable
 
 	def my_each
-		counter = 0
-		until counter == self.length
-			yield self[count]
-			count += 1
+		if block_given?
+			0.upto(self.length - 1) do |i|
+				yield self[i]
+			end
 		end
 		return self
 	end
 
 	def my_each_with_index
-		counter = 0
-		until counter == self.length
-			yield(self[counter], counter)
-			counter += 1
+		if block_given?
+			0.upto(self.length - 1) do |i|
+				yield self[i], i
+			end
 		end
 		return self
 	end
 
 	def my_select
-		counter = 0
+		return self unless block_given?
 		result = []
-		until counter == self.length
-			result << self[counter] if yield self[counter]
-			counter += 1
-		end
+		my_each { |val| result << val if yield val }
 		return result
 	end
 
 	def my_all?
-		counter = 0
-		result = []
-		block = Proc.new {|val| val}
-		until counter == self.length
-			if block_given?
-				result.push(yield self[counter])
-			else
-				result.push(block.call(self[counter]))
-			end
-			counter += 1
-		end
-		if result.include?(false) || result.include?(nil)
-			return false
+		if block_given?
+			my_each { |val| return false unless yield val }
 		else
-			return true
+			my_each { |val| return false if val.nil? || val == false}
 		end
+		return true
 	end
 
 	def my_any?
-		counter = 0
-		result = []
-		block = Proc.new {|val| val}
-		until counter == self.length
-			if block_given?
-				result.push(yield self[counter])
-			else
-				if block.call(self[counter]) == false || block.call(self[counter]) == nil
-					result.push(false)
-				else
-					result.push(true)
-				end
-			end
-			counter += 1
-		end
-		if result.include?(true)
-			return true
-		else
+		if block_given?
+			my_each { |val| return true if yield val }
 			return false
-		end			
+		else
+			my_each { |val| return false if val.nil? || val == false }
+			return true
+		end
 	end
 
 	def my_none?
-		counter = 0
-		result = []
 		if block_given?
-			until counter == self.length
-				if yield self[counter]
-					result << true
-				else
-					result << false
-				end
-				counter += 1
-			end
-			if result.include?(true)
-				return false
-			else
-				return true
-			end
+			my_each { |val| return false if yield val }
+			return true
 		else
-			if self.include?(true)
-				return false
-			else
-				return true
-			end
+			my_each { |val| return false if val }
+			return true
 		end
 	end
 
-	def my_count?(arg=0)
-		counter = 0
+	def my_count(arg=nil)
 		result = 0
-		if block_given?
-			until counter == self.length
-				if yield self[counter]
-					result += 1
-				end
-				counter += 1
-			end
-			puts result
-		elsif arg > 0
-			until counter == self.length
-				if self[counter] == arg
-					result += 1
-				end
-				counter += 1
-			end
-			puts result
+		if !arg.nil?
+			my_each { |val| result += 1 if val == arg }
 		else
-			puts self.length
-		end
-	end
-
-	def my_map(&block)
-		counter = 0
-		result = []
-		until counter == self.length
-			if block_given?
-				result.push(yield self[counter])
-			else
-				block.call(self[counter])
-			end
-			counter += 1
+			my_each { |val| result += 1 if yield val }
 		end
 		return result
 	end
 
-	def my_inject(par=nil)
-		counter = 0
+	def my_map(&proc)
+		return self unless block_given?
+		result = []
+		my_each { |val| result.push(yield val) }
+		return result
+	end
+
+	def my_inject(arg=nil)
 		result = 0
-		if par.is_a?(Symbol)
-			until counter == self.length
-				result = result.send(par, self[counter])
-				counter += 1
+		if arg.nil?
+			if block_given?
+				my_each { |val| result = yield(result, val) }
+			else
+				return "Block is missing."
 			end
 		else
-			until counter == self.length
-				result = yield(result, self[counter])
-				counter += 1
+			my_each { |val| result = result.send(arg, val) }
+		end
+		return result
+	end
+
+	def my_map(&proc)
+		result = []
+		if block_given?
+			if proc?
+				my_each { |val| result.push(proc.call(val)) }
+			else
+				my_each { |val| result.push(yield val) }
+			end
+		else
+			if proc?
+				my_each { |val| result.push(proc.call(val)) }
+			else
+				return self
 			end
 		end
 		return result
 	end
 
 	def multiply_els
-		self.my_inject do |sum, val|
+		my_inject do |sum, val|
 			if sum == 0
 				sum = val
 			else
